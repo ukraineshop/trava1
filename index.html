@@ -268,92 +268,77 @@ body{--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: 
 
 
 
+<form class="wpcf7-form init" id="order_form" method="POST">
+    <input class="m1-form__input placeholder" type="text" name="name" placeholder="Введіть ваше ім'я" autocomplete="off" required="">
+    <input class="m1-form__input placeholder" type="tel" name="phone" placeholder="Ваш номер телефону" required="required" inputmode="tel">
+    <select name="count" class="field" data-js="select-sale" required="">
+        <option value="" selected="" disabled="">Оберіть розмір</option>
+        <option value="10м">10м</option>
+        <option value="20м">20м</option>
+        <option value="50м">50м</option>
+        <option value="80м">80м</option>
+        <option value="100м">100м</option>
+    </select>
+    <button class="big-button" type="submit">Замовити зі знижкою</button>
+</form>
 
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Замовлення</title>
-</head>
-<body>
-    <div class="contact-form" id="contact_form" data-redirect="./трава_files/thank_you_page.html">
-        <div class="oreder-form">
-            <div class="number-discount">
-                <h3 class="block-title">КУПУЙ ПРЯМО ЗАРАЗ!</h3>
-                <ol role="list" class="discount-list">
-                    <li>від 20 м2 <strong>= </strong> ціна по <strong>194грн</strong></li>
-                    <li>від 50 м2 <strong>= </strong> ціна по <strong>185грн</strong></li>
-                </ol>
-            </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('order_form').addEventListener('submit', function(e) {
+        e.preventDefault(); // Запобігаємо стандартній відправці форми
 
-            <div class="wpcf7 no-js" id="wpcf7-f97-o1" lang="uk" dir="ltr">
-                <div class="screen-reader-response">
-                    <p role="status" aria-live="polite" aria-atomic="true"></p>
-                    <ul></ul>
-                </div>
-                <form class="wpcf7-form init" id="order_form" method="POST">
-                    <input class="m1-form__input placeholder" type="text" name="name" placeholder="Введіть ваше ім&#39;я" autocomplete="off" required>
-                    <input class="m1-form__input placeholder" type="tel" name="phone" placeholder="Ваш номер телефону" required inputmode="tel">
-                    <select name="count" class="field" data-js="select-sale" required>
-                        <option value="" selected disabled>Оберіть розмір</option>
-                        <option value="10м">10м</option>
-                        <option value="20м">20м</option>
-                        <option value="50м">50м</option>
-                        <option value="80м">80м</option>
-                        <option value="100м">100м</option>
-                    </select>
-                    <button class="big-button" type="submit">Замовити зі знижкою</button>
-                </form>
-            </div>
-        </div>
-    </div>
+        // Отримуємо значення полів форми
+        var name = document.querySelector('input[name="name"]').value;
+        var phone = document.querySelector('input[name="phone"]').value;
+        var count = document.querySelector('select[name="count"]').value;
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('order_form').addEventListener('submit', function(e) {
-                e.preventDefault(); // Запобігаємо стандартній відправці форми
+        // Перевірка на заповненість всіх полів
+        if (!name  !phone  !count) {
+            alert('Будь ласка, заповніть всі поля форми.');
+            return;
+        }
 
-                // Отримуємо значення полів форми
-                var name = document.querySelector('input[name="name"]').value;
-                var phone = document.querySelector('input[name="phone"]').value;
-                var count = document.querySelector('select[name="count"]').value;
+        // Формуємо повідомлення
+        var message = Нове замовлення:\nІм'я та прізвище: ${name}\nТелефон: ${phone}\nРозмір: ${count};
 
-                // Формуємо повідомлення
-                var message = `Нове замовлення:\nІм'я та прізвище: ${name}\nТелефон: ${phone}\nРозмір: ${count}`;
+        // Ваш токен та ID чату
+        var token = '7204057373:AAHkA5T_TV8UeuNHSCDE8MOiDdW0SSrqFwA';
+        var chatId = 2025391581; // Замініть на ваш реальний ID чату
 
-                // Ваш токен та ID чату
-                var token = '7204057373:AAHkA5T_TV8UeuNHSCDE8MOiDdW0SSrqFwA';
-                var chatId = 2025391581; // Замініть на ваш реальний ID чату
-
-                // Відправляємо повідомлення через Telegram API
-                fetch('https://api.telegram.org/bot' + token + '/sendMessage', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        chat_id: chatId,
-                        text: message,
-                        parse_mode: "Markdown"
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Success:', data);
-                    // Після успішної відправки, одразу перенаправляємо на сторінку "Дякую"
-                    var redirectUrl = document.querySelector('#contact_form').getAttribute('data-redirect');
+        // Відправляємо повідомлення через Telegram API
+        fetch('https://api.telegram.org/bot' + token + '/sendMessage', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: message,
+                parse_mode: "Markdown"
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.ok) {
+                console.log('Success:', data);
+                // Після успішної відправки, одразу перенаправляємо на сторінку "Дякую"
+                var redirectUrl = document.querySelector('#order_form').getAttribute('data-redirect');
+                if (redirectUrl) {
                     window.location.href = redirectUrl; 
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Помилка при відправленні замовлення.');
-                });
-            });
+                } else {
+                    alert('Замовлення успішно надіслано! Дякуємо!');
+                }
+            } else {
+                throw new Error(data.description);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Помилка при відправленні замовлення: ' + error.message);
         });
-    </script>
-</body>
-</html>
+    });
+});
+</script>
 
                        
 
